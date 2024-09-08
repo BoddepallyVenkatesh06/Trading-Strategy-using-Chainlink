@@ -1,0 +1,3 @@
+[submodule "deps/fonts"]
+	path = deps/fonts
+	url = git@github.com:tradingstrategy-ai/fonts.git

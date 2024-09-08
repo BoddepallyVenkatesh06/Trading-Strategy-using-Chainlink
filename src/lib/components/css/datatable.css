@@ -1,0 +1,238 @@
+/**
+ * Datatable styling
+ *
+ * see: src/lib/components/datatable
+ *
+ * Usage:
+ *   <table class="datatable [sm]">
+ *     ...
+ *   </table>
+*/
+table.datatable {
+	--border-spacing: var(--space-sl);
+	--cell-padding: var(--space-sl) var(--space-ml);
+	--table-transition: all var(--time-xs) ease-out, color 0ms;
+	--table-font: var(--f-ui-md-medium);
+	--table-letter-spacing: var(--f-ui-md-spacing, normal);
+	--cell-padding: var(--space-sl) var(--space-ml);
+	--table-border-radius: var(--radius-md);
+	--body-cell-height: 3.25rem;
+	border-collapse: separate;
+	border-spacing: 0 var(--border-spacing);
+	margin: calc(-1 * var(--border-spacing)) 0;
+	width: 100%;
+
+	&.sm {
+		--cell-padding: var(--space-ss) var(--space-md);
+		--body-cell-height: 2.875rem;
+		--table-border-radius: var(--radius-md);
+		--table-font: var(--f-ui-sm-medium);
+	}
+
+	@media (width <= 920px) {
+		--cell-padding: 0 var(--space-xs);
+		--table-font: var(--f-ui-sm-medium) !important;
+		--table-letter-spacing: var(--f-ui-sm-spacing, normal);
+	}
+
+	@media (--viewport-sm-down) {
+		--table-font: var(--f-ui-xs-medium) !important;
+		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
+	}
+
+	thead tr:first-child {
+		background: var(--c-body);
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
+	thead.sticky th {
+		border-radius: 0;
+	}
+
+	th {
+		background: var(--c-body);
+		color: var(--c-text-extra-light);
+		font: var(--table-font);
+		letter-spacing: var(--table-letter-spacing, normal);
+		overflow: hidden;
+		padding: var(--space-md) var(--space-ls);
+		position: relative;
+		transition: var(--table-transition);
+		white-space: nowrap;
+		text-align: left;
+		text-overflow: ellipsis;
+	}
+
+	tbody tr {
+		td {
+			background: var(--c-box-2);
+			height: var(--body-cell-height);
+			font: var(--table-font);
+			letter-spacing: var(--table-letter-spacing, normal);
+			padding: var(--cell-padding);
+			position: relative;
+			transition: var(--table-transition);
+			vertical-align: middle;
+			--button-width: 100%;
+
+			&:first-child {
+				border-radius: var(--table-border-radius) 0 0 var(--table-border-radius);
+			}
+
+			&:last-child {
+				border-radius: 0 var(--table-border-radius) var(--table-border-radius) 0;
+
+				&.cta {
+					--cell-padding: 0 var(--space-xs) 0 var(--space-xs);
+				}
+			}
+		}
+
+		&:is(:hover, :focus, :focus-within) {
+			td {
+				background: var(--c-box-4);
+			}
+
+			.button {
+				--c-accent: var(--c-text);
+				color: var(--c-text-inverted);
+			}
+
+			.up-down-indicator:is(.bullish, .bearish) {
+				background: var(--background-hover);
+			}
+		}
+	}
+
+	:is(th, td).right {
+		text-align: right;
+	}
+
+	&.responsive {
+		@media (--viewport-sm-down) {
+			display: grid;
+			gap: var(--space-md);
+
+			/* hide table head; display td:data-label attr as nested cell label instead */
+			thead {
+				display: none;
+			}
+
+			/* remove tbody from layout (so tr's are the grid rows) */
+			tbody {
+				display: contents;
+			}
+
+			tbody tr {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				padding: var(--space-sm) 0;
+				border-radius: var(--table-border-radius);
+				background: var(--c-box-2);
+				overflow: hidden;
+
+				@media (width < 390px) {
+					grid-template-columns: 1fr;
+				}
+
+				/* Display row # if tr includes data-row-index attribute */
+				&[data-row-index] {
+					padding-top: var(--space-5xl);
+					position: relative;
+
+					&::before {
+						position: absolute;
+						top: var(--space-ms);
+						left: var(--space-ml);
+						font: var(--f-ui-xl-bold);
+						content: '#' attr(data-row-index);
+					}
+				}
+
+				td {
+					display: grid;
+					gap: var(--space-xxs);
+					align-content: start;
+					height: auto;
+					padding: var(--space-sm) var(--space-ml);
+					background: transparent;
+					font: var(--f-ui-xl-medium);
+					word-break: break-all;
+
+					&:not(.cta)::before {
+						content: attr(data-label);
+						font: var(--f-ui-xs-roman);
+					}
+
+					&.cta {
+						padding-bottom: var(--space-ms);
+						padding-top: var(--space-ms);
+						grid-column: 1/-1;
+					}
+				}
+			}
+
+			tfoot {
+				display: grid;
+
+				:is(tr, td) {
+					display: contents;
+				}
+			}
+
+			.up-down-cell {
+				justify-content: flex-start;
+				margin-top: var(--space-sm);
+			}
+		}
+	}
+
+	.button {
+		white-space: nowrap;
+	}
+}
+
+table.loading {
+	:not(thead, tfoot) tr td {
+		color: transparent;
+
+		&::before {
+			animation: pulse-opacity 1s infinite ease-out;
+			background: var(--c-box-3);
+			bottom: var(--space-sm);
+			border-radius: var(--radius-sm);
+			content: '';
+			left: var(--space-sm);
+			position: absolute;
+			right: var(--space-sm);
+			top: var(--space-sm);
+		}
+
+		* {
+			color: transparent;
+			background: transparent !important;
+		}
+	}
+
+	.button {
+		cursor: loading;
+
+		span {
+			color: transparent;
+
+			&::before {
+				animation: pulse-opacity 1s infinite ease-out;
+				background: var(--c-box-3);
+				bottom: var(--space-lg);
+				border-radius: var(--radius-sm);
+				content: '';
+				left: var(--space-lg);
+				position: absolute;
+				right: var(--space-lg);
+				top: var(--space-lg);
+			}
+		}
+	}
+}

@@ -1,0 +1,11 @@
+# common
+**/.git/
+**/node_modules/
+**/.svelte-kit/
+
+# frontend (root)
+build/
+tests/
+docs/
+Dockerfile
+docker-compose.yml

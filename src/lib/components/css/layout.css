@@ -1,0 +1,22 @@
+/* Global settings for design-system layout */
+:root {
+	--container-max-width: 86rem;
+	--container-margin: 1.5rem;
+}
+
+/* design-system layout utility classes */
+.ds-container {
+	--container-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
+	display: grid;
+	padding-inline: calc((100% - var(--container-width)) / 2);
+}
+
+.ds-2-col {
+	--column-gap: 2.5rem;
+	--column-min: calc((1024px - 2 * var(--container-margin) - var(--column-gap)) / 2);
+	--column-max: calc((var(--container-width) - var(--column-gap)) / 2);
+	--template-min: min(var(--container-width), max(var(--column-min), var(--column-max)));
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--template-min), 1fr));
+	gap: 1.5rem var(--column-gap);
+}

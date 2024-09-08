@@ -1,0 +1,55 @@
+# A docker-compose file to run frontend SvelteKit SSR with node-adapter.
+#
+# The Docker container is automatically built by the Github action in javascript.yml.
+#
+version: '3.9'
+services:
+  frontend:
+    container_name: frontend
+    image: 'ghcr.io/tradingstrategy-ai/frontend:${TS_PUBLIC_FRONTEND_VERSION_TAG}'
+    ports:
+      # The production server has :80 port bind by Caddy.
+      # Mapped in reverse proxy Caddyfile
+      # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
+      - '127.0.0.1:3000:3000'
+    command: node --require dd-trace/init scripts/server.js
+    # See https://stackoverflow.com/a/67158212/315168
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    environment:
+      # See config.ts
+      # See .env - docker-compose reads .env file
+      - TS_PUBLIC_SITE_MODE
+      - TS_PUBLIC_FRONTEND_VERSION_TAG
+      - TS_PUBLIC_BACKEND_URL
+      - TS_PUBLIC_BACKEND_INTERNAL_URL
+      - TS_PUBLIC_SENTRY_DSN
+      - TS_PUBLIC_GHOST_CONTENT_API_KEY
+      - TS_PUBLIC_GHOST_API_URL
+      - TS_PUBLIC_TYPESENSE_API_KEY
+      - TS_PUBLIC_TYPESENSE_API_URL
+      - TS_PUBLIC_DISCORD_URL
+      - TS_PUBLIC_STRATEGIES
+      - TS_PUBLIC_GEO_BLOCK
+      - TS_PUBLIC_WALLET_CONNECT_PROJECT_ID
+      - TS_PUBLIC_RPC_URLS
+      - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
+      - TS_PUBLIC_MAINTENANCE_NOTICE
+      # Private (secret) env vars - do not add to .env
+      - TS_PRIVATE_ADMIN_PW
+      - TS_PRIVATE_MAILERLITE_URL
+      - TS_PRIVATE_MAILERLITE_API_KEY
+      - TS_PRIVATE_MAILERLITE_GROUPS
+      # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
+      - TOP_WEB_API_KEY
+      # Datadog APM env vars
+      - DD_ENV=${DD_ENV:-local}
+      - DD_VERSION=${TS_PUBLIC_FRONTEND_VERSION_TAG}
+      - DD_TRACE_AGENT_URL
+      - DD_DOGSTATSD_URL
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 30s
